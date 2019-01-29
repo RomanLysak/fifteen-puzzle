@@ -8,4 +8,5 @@ public interface PuzzleModel {
 	void moveBlankTile(GameCommand command);
 	int[] getTiles();
 	int getSideSize();
+	int getBlankPosition();
 }

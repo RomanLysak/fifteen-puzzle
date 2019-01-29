@@ -1,9 +1,7 @@
 package com.test.fifteenpuzzle.view.impl;
 
 import com.test.fifteenpuzzle.view.PuzzleView;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class PuzzleViewImpl implements PuzzleView {
 	@Override
 	public void draw(int[] tiles, int sideSize) {

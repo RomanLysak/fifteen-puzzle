@@ -63,14 +63,19 @@ public class PuzzleModelImpl implements PuzzleModel {
 		return this.sideSize;
 	}
 
+	@Override
+	public int getBlankPosition() {
+		return this.blankPosition;
+	}
+
 	private int calcNewBlankPosition(GameCommand command) throws RuntimeException {
 		int offset;
 		switch (command) {
 			case LEFT:
-				offset = 1;
+				offset = -1;
 				break;
 			case RIGHT:
-				offset = -1;
+				offset = 1;
 				break;
 			case TOP:
 				offset = -sideSize;
