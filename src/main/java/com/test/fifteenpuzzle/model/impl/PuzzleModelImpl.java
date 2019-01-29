@@ -1,6 +1,6 @@
 package com.test.fifteenpuzzle.model.impl;
 
-import com.test.fifteenpuzzle.GameCommand;
+import com.test.fifteenpuzzle.model.MoveDirection;
 import com.test.fifteenpuzzle.model.PuzzleModel;
 
 import java.util.Random;
@@ -39,11 +39,11 @@ public class PuzzleModelImpl implements PuzzleModel {
 		do {
 			reset();
 			shuffle();
-		} while (!isSolvable());
+		} while (!isSolvable() || isSolved());
 	}
 
 	@Override
-	public void moveBlankTile(GameCommand command) {
+	public void moveBlankTile(MoveDirection command) {
 		int newBlankPosition = calcNewBlankPosition(command);
 		if (!isValidBlankPosition(newBlankPosition)) {
 			return;
@@ -68,7 +68,7 @@ public class PuzzleModelImpl implements PuzzleModel {
 		return this.blankPosition;
 	}
 
-	private int calcNewBlankPosition(GameCommand command) throws RuntimeException {
+	private int calcNewBlankPosition(MoveDirection command) throws RuntimeException {
 		int offset;
 		switch (command) {
 			case LEFT:
@@ -84,7 +84,7 @@ public class PuzzleModelImpl implements PuzzleModel {
 				offset = sideSize;
 				break;
 			default:
-				throw new RuntimeException("Command is not supported!");
+				throw new RuntimeException("Direction is not supported!");
 		}
 
 		return blankPosition + offset;
