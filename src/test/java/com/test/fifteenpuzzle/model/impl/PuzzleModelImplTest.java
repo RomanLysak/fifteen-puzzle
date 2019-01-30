@@ -2,6 +2,7 @@ package com.test.fifteenpuzzle.model.impl;
 
 import com.test.fifteenpuzzle.model.MoveDirection;
 import com.test.fifteenpuzzle.model.PuzzleModel;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -9,6 +10,14 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
 public class PuzzleModelImplTest {
+
+	PuzzleModel puzzleModel;
+
+	@Before
+	public void setUp() {
+		puzzleModel = new PuzzleModelImpl(4);
+		puzzleModel.newPuzzle();
+	}
 
 	@Test
 	public void newPuzzle() throws Exception {
@@ -24,94 +33,131 @@ public class PuzzleModelImplTest {
 
 	@Test
 	public void getSideSize() throws Exception {
-		PuzzleModel gameModel = new PuzzleModelImpl(4);
-
-		int result = gameModel.getSideSize();
+		int result = puzzleModel.getSideSize();
 
 		assertThat(result, equalTo(4));
 	}
 
 	@Test
 	public void getBlankPosition() throws Exception {
-		PuzzleModel gameModel = new PuzzleModelImpl(4);
-		gameModel.newPuzzle();
+		int result = puzzleModel.getBlankPosition();
 
-		int result = gameModel.getBlankPosition();
-
-		assertThat(gameModel.getTiles()[result], equalTo(0));
+		assertThat(puzzleModel.getTiles()[result], equalTo(0));
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void moveBlankTile_notSupportedCommand() throws Exception {
-		PuzzleModel gameModel = new PuzzleModelImpl(4);
-
-		gameModel.moveBlankTile(null);
+		puzzleModel.moveBlankTile(null);
 		fail();
 	}
 
 	@Test
 	public void moveBlankTile_moveRight_borderCase() throws Exception {
-		PuzzleModel gameModel = new PuzzleModelImpl(4);
-		gameModel.newPuzzle();
-		int[] expectedTiles = new int[gameModel.getTiles().length];
-		System.arraycopy(gameModel.getTiles(), 0, expectedTiles, 0, gameModel.getTiles().length);
-		int oldBlankPosition = gameModel.getBlankPosition();
+		int[] expectedTiles = new int[puzzleModel.getTiles().length];
+		System.arraycopy(puzzleModel.getTiles(), 0, expectedTiles, 0, puzzleModel.getTiles().length);
+		int oldBlankPosition = puzzleModel.getBlankPosition();
 
-		gameModel.moveBlankTile(MoveDirection.RIGHT);
+		puzzleModel.moveBlankTile(MoveDirection.RIGHT);
 
-		assertThat(gameModel.getBlankPosition(), equalTo(oldBlankPosition));
-		assertThat(gameModel.getTiles(), equalTo(expectedTiles));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(oldBlankPosition));
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
 	}
 
 	@Test
 	public void moveBlankTile_moveDown_borderCase() throws Exception {
-		PuzzleModel gameModel = new PuzzleModelImpl(4);
-		gameModel.newPuzzle();
-		int[] expectedTiles = new int[gameModel.getTiles().length];
-		System.arraycopy(gameModel.getTiles(), 0, expectedTiles, 0, gameModel.getTiles().length);
-		int oldBlankPosition = gameModel.getBlankPosition();
+		int[] expectedTiles = new int[puzzleModel.getTiles().length];
+		System.arraycopy(puzzleModel.getTiles(), 0, expectedTiles, 0, puzzleModel.getTiles().length);
+		int oldBlankPosition = puzzleModel.getBlankPosition();
 
-		gameModel.moveBlankTile(MoveDirection.DOWN);
+		puzzleModel.moveBlankTile(MoveDirection.DOWN);
 
-		assertThat(gameModel.getBlankPosition(), equalTo(oldBlankPosition));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(oldBlankPosition));
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
+	}
+
+	@Test
+	public void moveBlankTile_moveLeft_borderCase() throws Exception {
+		changeBlankPosition(0);
+		int[] expectedTiles = new int[puzzleModel.getTiles().length];
+		System.arraycopy(puzzleModel.getTiles(), 0, expectedTiles, 0, puzzleModel.getTiles().length);
+		int oldBlankPosition = puzzleModel.getBlankPosition();
+
+		puzzleModel.moveBlankTile(MoveDirection.LEFT);
+
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(oldBlankPosition));
+	}
+
+	@Test
+	public void moveBlankTile_moveTop_borderCase() throws Exception {
+		changeBlankPosition(0);
+		int[] expectedTiles = new int[puzzleModel.getTiles().length];
+		System.arraycopy(puzzleModel.getTiles(), 0, expectedTiles, 0, puzzleModel.getTiles().length);
+		int oldBlankPosition = puzzleModel.getBlankPosition();
+
+		puzzleModel.moveBlankTile(MoveDirection.TOP);
+
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(oldBlankPosition));
+	}
+
+	@Test
+	public void moveBlankTile_moveRight() throws Exception {
+		changeBlankPosition(5);
+		int oldBlankPosition = puzzleModel.getBlankPosition();
+		int newBlankPosition = oldBlankPosition + 1;
+		int replacedValue = puzzleModel.getTiles()[newBlankPosition];
+		int[] expectedTiles = copyArrayToCompare(oldBlankPosition, newBlankPosition, replacedValue);
+
+		puzzleModel.moveBlankTile(MoveDirection.RIGHT);
+
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(newBlankPosition));
+		assertThat(puzzleModel.getTiles()[oldBlankPosition], equalTo(replacedValue));
+	}
+
+
+	@Test
+	public void moveBlankTile_moveDown() throws Exception {
+		changeBlankPosition(7);
+		int oldBlankPosition = puzzleModel.getBlankPosition();
+		int newBlankPosition = oldBlankPosition + 4;
+		int replacedValue = puzzleModel.getTiles()[newBlankPosition];
+		int[] expectedTiles = copyArrayToCompare(oldBlankPosition, newBlankPosition, replacedValue);
+
+		puzzleModel.moveBlankTile(MoveDirection.DOWN);
+
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(newBlankPosition));
+		assertThat(puzzleModel.getTiles()[oldBlankPosition], equalTo(replacedValue));
 	}
 
 	@Test
 	public void moveBlankTile_moveLeft() throws Exception {
-		PuzzleModel gameModel = new PuzzleModelImpl(4);
-		gameModel.newPuzzle();
-		int oldBlankPosition = gameModel.getBlankPosition();
+		int oldBlankPosition = puzzleModel.getBlankPosition();
 		int newBlankPosition = oldBlankPosition - 1;
-		int replacedValue = gameModel.getTiles()[newBlankPosition];
-		int[] expectedTiles = new int[gameModel.getTiles().length];
-		System.arraycopy(gameModel.getTiles(), 0, expectedTiles, 0, gameModel.getTiles().length);
-		expectedTiles[newBlankPosition] = 0;
-		expectedTiles[oldBlankPosition] = replacedValue;
+		int replacedValue = puzzleModel.getTiles()[newBlankPosition];
+		int[] expectedTiles = copyArrayToCompare(oldBlankPosition, newBlankPosition, replacedValue);
 
-		gameModel.moveBlankTile(MoveDirection.LEFT);
+		puzzleModel.moveBlankTile(MoveDirection.LEFT);
 
-		assertThat(gameModel.getTiles(), equalTo(expectedTiles));
-		assertThat(gameModel.getBlankPosition(), equalTo(newBlankPosition));
-		assertThat(gameModel.getTiles()[oldBlankPosition], equalTo(replacedValue));
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(newBlankPosition));
+		assertThat(puzzleModel.getTiles()[oldBlankPosition], equalTo(replacedValue));
 	}
 
 	@Test
 	public void moveBlankTile_moveTop() throws Exception {
-		PuzzleModel gameModel = new PuzzleModelImpl(4);
-		gameModel.newPuzzle();
-		int oldBlankPosition = gameModel.getBlankPosition();
-		int newBlankPosition = gameModel.getBlankPosition() - 4;
-		int replacedValue = gameModel.getTiles()[newBlankPosition];
-		int[] expectedTiles = new int[gameModel.getTiles().length];
-		System.arraycopy(gameModel.getTiles(), 0, expectedTiles, 0, gameModel.getTiles().length);
-		expectedTiles[newBlankPosition] = 0;
-		expectedTiles[oldBlankPosition] = replacedValue;
+		int oldBlankPosition = puzzleModel.getBlankPosition();
+		int newBlankPosition = puzzleModel.getBlankPosition() - 4;
+		int replacedValue = puzzleModel.getTiles()[newBlankPosition];
+		int[] expectedTiles = copyArrayToCompare(oldBlankPosition, newBlankPosition, replacedValue);
 
-		gameModel.moveBlankTile(MoveDirection.TOP);
+		puzzleModel.moveBlankTile(MoveDirection.TOP);
 
-		assertThat(gameModel.getTiles(), equalTo(expectedTiles));
-		assertThat(gameModel.getBlankPosition(), equalTo(newBlankPosition));
-		assertThat(gameModel.getTiles()[oldBlankPosition], equalTo(replacedValue));
+		assertThat(puzzleModel.getTiles(), equalTo(expectedTiles));
+		assertThat(puzzleModel.getBlankPosition(), equalTo(newBlankPosition));
+		assertThat(puzzleModel.getTiles()[oldBlankPosition], equalTo(replacedValue));
 	}
 
 	@Test
@@ -145,6 +191,21 @@ public class PuzzleModelImplTest {
 		boolean result = gameModel.isSolved();
 
 		assertTrue(result);
+	}
+
+	private void changeBlankPosition(int newPositionIndex) {
+		int oldBlankPosition = puzzleModel.getBlankPosition();
+		int replacedValue = puzzleModel.getTiles()[newPositionIndex];
+		puzzleModel.getTiles()[oldBlankPosition] = replacedValue;
+		puzzleModel.getTiles()[newPositionIndex] = 0;
+	}
+
+	private int[] copyArrayToCompare(int oldBlankPosition, int newBlankPosition, int replacedValue) {
+		int[] expectedTiles = new int[puzzleModel.getTiles().length];
+		System.arraycopy(puzzleModel.getTiles(), 0, expectedTiles, 0, puzzleModel.getTiles().length);
+		expectedTiles[newBlankPosition] = 0;
+		expectedTiles[oldBlankPosition] = replacedValue;
+		return expectedTiles;
 	}
 
 }

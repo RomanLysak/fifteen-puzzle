@@ -15,9 +15,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PuzzleControllerImplTest {
@@ -60,8 +58,6 @@ public class PuzzleControllerImplTest {
 
 		verify(puzzleModel, never()).newPuzzle();
 		verify(puzzleModel, never()).moveBlankTile(any(MoveDirection.class));
-		verify(puzzleView).showMessage(messageCaptor.capture());
-		assertThat(messageCaptor.getValue(), equalTo(PuzzleControllerImpl.GAME_OVER_MESSAGE));
 	}
 
 	@Test

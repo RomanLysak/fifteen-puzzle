@@ -4,6 +4,7 @@ import com.test.fifteenpuzzle.model.MoveDirection;
 import com.test.fifteenpuzzle.model.PuzzleModel;
 
 import java.util.Random;
+import java.util.stream.IntStream;
 
 public class PuzzleModelImpl implements PuzzleModel {
 
@@ -11,8 +12,6 @@ public class PuzzleModelImpl implements PuzzleModel {
 	private final int sideSize;
 	private final int tilesNumber;
 	private final Random random;
-
-	private int blankPosition;
 
 	public PuzzleModelImpl(int sideSize) {
 		this.sideSize = sideSize;
@@ -44,6 +43,7 @@ public class PuzzleModelImpl implements PuzzleModel {
 
 	@Override
 	public void moveBlankTile(MoveDirection command) {
+		int blankPosition = getBlankPosition();
 		int newBlankPosition = calcNewBlankPosition(command);
 		if (!isValidBlankPosition(newBlankPosition)) {
 			return;
@@ -65,7 +65,9 @@ public class PuzzleModelImpl implements PuzzleModel {
 
 	@Override
 	public int getBlankPosition() {
-		return this.blankPosition;
+		return IntStream.range(0, tiles.length)
+				.filter(i -> 0 == tiles[i])
+				.findFirst().getAsInt();
 	}
 
 	private int calcNewBlankPosition(MoveDirection command) throws RuntimeException {
@@ -87,10 +89,11 @@ public class PuzzleModelImpl implements PuzzleModel {
 				throw new RuntimeException("Direction is not supported!");
 		}
 
-		return blankPosition + offset;
+		return getBlankPosition() + offset;
 	}
 
 	private boolean isValidBlankPosition(int newBlankPosition) {
+		int blankPosition = getBlankPosition();
 		int xNewBlankPosition = newBlankPosition % sideSize;
 		int yNewBlankPosition = newBlankPosition / sideSize;
 		int xBlankPositionPrevious = blankPosition % sideSize;
@@ -120,7 +123,6 @@ public class PuzzleModelImpl implements PuzzleModel {
 		for (int i = 0; i < tiles.length; i++) {
 			tiles[i] = (i + 1) % tiles.length;
 		}
-		blankPosition = tilesNumber;
 	}
 
 	private void shuffle() {

@@ -24,5 +24,6 @@ public class PuzzleMain {
 			gameController.execute(scanner.next());
 			gameView.showMessage("Next command: ");
 		}
+		gameView.showMessage("Game over!");
 	}
 }

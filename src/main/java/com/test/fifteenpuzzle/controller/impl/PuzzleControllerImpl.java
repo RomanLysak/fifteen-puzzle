@@ -8,7 +8,6 @@ import com.test.fifteenpuzzle.view.PuzzleView;
 
 public class PuzzleControllerImpl implements PuzzleController {
 
-	public static final String GAME_OVER_MESSAGE = "Game over";
 	public static final String COMMAND_NOT_SUPPORTED_MESSAGE = "Game command is not supported";
 	public static final String CONGRATS_MESSAGE = "You won, congratulations!";
 
@@ -29,7 +28,6 @@ public class PuzzleControllerImpl implements PuzzleController {
 				redraw();
 				break;
 			case END:
-				gameView.showMessage(GAME_OVER_MESSAGE);
 				return;
 			case TOP:
 				gameModel.moveBlankTile(MoveDirection.TOP);
